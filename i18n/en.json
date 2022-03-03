@@ -1,0 +1,11 @@
+{
+  "@metadata": { "authors": ["Arumi"] },
+  "mediaxontentrating-desc": "Provide Media Content Rating and viewing restrictions functionalities.",
+  "content-rating-show": "Show",
+  "content-rating-hide": "Hide",
+
+  "prefs-content-rating": "Media Content Viewing Restriction",
+  "content-rating-r15": "Restricted 15 Content (R-15)",
+  "content-rating-r18": "Restricted 18 Content (R-18)",
+  "content-rating-r18g": "Ero-guro Content (R-18G)"
+}

@@ -1,0 +1,31 @@
+{
+  "name": "MediaContentRating",
+  "author": "[https://thwiki.cc/User:Arumi Arumi]",
+  "descriptionmsg": "mediaxontentrating-desc",
+  "license-name": "MIT",
+  "type": "media",
+  "MessagesDirs": {
+    "MediaContentRating": ["i18n"]
+  },
+  "ExtensionMessagesFiles": {
+    "MediaContentRatingMagic": "MediaContentRating.i18n.magic.php"
+  },
+  "AutoloadClasses": {
+    "MediaContentRatingHooks": "MediaContentRatingHooks.php"
+  },
+  "Hooks": {
+    "ParserFirstCallInit": ["MediaContentRatingHooks::onParserFirstCallInit"],
+    "OutputPageBeforeHTML": ["MediaContentRatingHooks::onOutputPageBeforeHTML"],
+    "ImageBeforeProduceHTML": ["MediaContentRatingHooks::onImageBeforeProduceHTML"],
+    "ImageOpenShowImageInlineBefore": ["MediaContentRatingHooks::onImageOpenShowImageInlineBefore"],
+    "BeforeAddToGallery": ["MediaContentRatingHooks::onBeforeAddToGallery"],
+    "GetPreferences": ["MediaContentRatingHooks::onGetPreferences"]
+  },
+  "config_prefix": "wg",
+  "config": {
+    "MediaContentRatingWarningImage": {
+      "value": ""
+    }
+  },
+  "manifest_version": 2
+}

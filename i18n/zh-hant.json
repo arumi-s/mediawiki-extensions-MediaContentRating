@@ -1,0 +1,11 @@
+{
+  "@metadata": { "authors": ["Arumi"] },
+  "mediaxontentrating-desc": "提供圖片內容分級、瀏覽限制功能。",
+  "content-rating-show": "顯示",
+  "content-rating-hide": "隱藏",
+
+  "prefs-content-rating": "分級圖片瀏覽限制",
+  "content-rating-r15": "擦邊球作品（R-15）",
+  "content-rating-r18": "限制瀏覽的作品（R-18）",
+  "content-rating-r18g": "獵奇作品（R-18G）"
+}
