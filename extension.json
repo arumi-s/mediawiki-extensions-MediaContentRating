@@ -19,7 +19,9 @@
     "ImageBeforeProduceHTML": ["MediaContentRatingHooks::onImageBeforeProduceHTML"],
     "ImageOpenShowImageInlineBefore": ["MediaContentRatingHooks::onImageOpenShowImageInlineBefore"],
     "BeforeAddToGallery": ["MediaContentRatingHooks::onBeforeAddToGallery"],
-    "GetPreferences": ["MediaContentRatingHooks::onGetPreferences"]
+    "GetPreferences": ["MediaContentRatingHooks::onGetPreferences"],
+    "PageImages::getScore": ["MediaContentRatingHooks::onPageImagesGetScore"],
+    "ImageListPagerFormatThumb": ["MediaContentRatingHooks::onImageListPagerFormatThumb"]
   },
   "config_prefix": "wg",
   "config": {

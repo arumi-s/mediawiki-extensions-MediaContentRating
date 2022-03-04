@@ -160,6 +160,41 @@ class MediaContentRatingHooks {
 	}
 
 	/**
+	 * Prevent restricted image from chosen as page images
+	 *
+	 * @param array $image Associative array describing an image
+	 * @param int $position Image order on page
+	 * @param float &$score Score for image
+	 * @return bool Always <code>true</code>
+	 */
+	public static function onPageImagesGetScore( array $image, $position, &$score ) {
+		if ( !empty( self::getContentRating( wfFindFile( $image['filename'] ) ) ) ) {
+			$score = -1000;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Remove restricted image from image list
+	 *
+	 * @param ImageListPager $imageListPager
+	 * @param File $file
+	 * @param string &$html
+	 * @return bool
+	 */
+	public static function onImageListPagerFormatThumb( ImageListPager $imageListPager, File $file, string &$html ) {
+		$user = $imageListPager->getUser();
+		$rate = self::getContentRating( $file );
+		if ( !self::isUserAllowed( $user, $rate ) ) {
+			$html = '';
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * @param File|Title|string $text
 	 * @return string
 	 */
