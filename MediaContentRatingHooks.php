@@ -183,7 +183,7 @@ class MediaContentRatingHooks {
 	 * @param string &$html
 	 * @return bool
 	 */
-	public static function onImageListPagerFormatThumb( ImageListPager $imageListPager, File $file, string &$html ) {
+	public static function onBeforeAddToImageList( ImageListPager $imageListPager, File $file, string &$html ) {
 		$user = $imageListPager->getUser();
 		$rate = self::getContentRating( $file );
 		if ( !self::isUserAllowed( $user, $rate ) ) {

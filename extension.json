@@ -21,7 +21,7 @@
     "BeforeAddToGallery": ["MediaContentRatingHooks::onBeforeAddToGallery"],
     "GetPreferences": ["MediaContentRatingHooks::onGetPreferences"],
     "PageImages::getScore": ["MediaContentRatingHooks::onPageImagesGetScore"],
-    "ImageListPagerFormatThumb": ["MediaContentRatingHooks::onImageListPagerFormatThumb"]
+    "BeforeAddToImageList": ["MediaContentRatingHooks::onBeforeAddToImageList"]
   },
   "config_prefix": "wg",
   "config": {
