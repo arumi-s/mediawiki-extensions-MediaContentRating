@@ -1,5 +1,8 @@
 <?php
 
+use MediaWiki\MediaWikiServices;
+use PageImages\PageImageCandidate;
+
 /**
  * MediaContentRating
  *
@@ -9,7 +12,7 @@
 class MediaContentRatingHooks
 {
 	/**
-	 * @var map[string]string Content rating alias
+	 * @var array[string]string Content rating alias
 	 */
 	private static $msgs = [
 		'R15' => 'R15,R-15,R 15,15',
@@ -25,7 +28,7 @@ class MediaContentRatingHooks
 	 */
 	public static function onGetPreferences(User $user, array &$preferences)
 	{
-		if ($user->isAnon() || $user->isBlocked()) {
+		if ($user->isAnon() || $user->getBlock()) {
 			return true;
 		}
 
@@ -42,7 +45,7 @@ class MediaContentRatingHooks
 				'section' => 'rendering/content-rating',
 				'options' => $option,
 				'flatlist' => true,
-				'default' => $user->getOption($name, false) ? '1' : '0',
+				'default' => MediaWikiServices::getInstance()->getUserOptionsLookup()->getOption($user, $name, false) ? '1' : '0',
 			];
 		}
 		return true;
@@ -73,9 +76,9 @@ class MediaContentRatingHooks
 		$rate = self::mapContentRating($text);
 
 		if ($rate !== '') {
-			$output->setProperty('content-rating', $rate);
+			$output->setPageProperty('content-rating', $rate);
 		} else {
-			$output->unsetProperty('content-rating');
+			$output->unsetPageProperty('content-rating');
 		}
 
 		return $rate;
@@ -95,7 +98,7 @@ class MediaContentRatingHooks
 		$startRating = isset($param['start']) ? strtolower(self::mapContentRating($param['start'])) : '';
 		$endRating = isset($param['end']) ? strtolower(self::mapContentRating($param['end'])) : '';
 
-		return ($endRating !== '' ? '<rating-end-' . $endRating . '></rating-end-' . $endRating . '>' : '') .
+		return($endRating !== '' ? '<rating-end-' . $endRating . '></rating-end-' . $endRating . '>' : '') .
 			($startRating !== '' ? '<rating-start-' . $startRating . '></rating-start-' . $startRating . '>' : '');
 	}
 
@@ -115,10 +118,13 @@ class MediaContentRatingHooks
 			$text = preg_replace('/<!--cr-.*?-cr-->/s', '', $text);
 			return true;
 		}
+
+		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+
 		foreach (self::$msgs as $rate => $msg) {
 			$rate = strtolower($rate);
 			$name = 'cr-allow-' . $rate;
-			if ($user->getOption($name, false)) {
+			if ($userOptionsLookup->getOption($user, $name, false)) {
 				$text = str_replace([
 					'<rating-start-' . $rate . '></rating-start-' . $rate . '>',
 					'<rating-end-' . $rate . '></rating-end-' . $rate . '>',
@@ -173,7 +179,7 @@ class MediaContentRatingHooks
 		if (self::isUserAllowed($imagePage->getContext()->getUser(), $rate)) {
 			return true;
 		}
-		$imagePage->setFile(wfFindFile($mediaContentRatingWarningImage));
+		$imagePage->setFile(MediaWikiServices::getInstance()->getRepoGroup()->findFile($mediaContentRatingWarningImage));
 
 		return true;
 	}
@@ -203,27 +209,29 @@ class MediaContentRatingHooks
 	 * @param string &$html
 	 * @return bool
 	 */
-	public static function onBeforeAddToImageList( ImageListPager $imageListPager, File $file, string &$html ) {
+	public static function onBeforeAddToImageList(ImageListPager $imageListPager, File $file, string &$html)
+	{
 		$user = $imageListPager->getUser();
-		$rate = self::getContentRating( $file );
-		if ( !self::isUserAllowed( $user, $rate ) ) {
+		$rate = self::getContentRating($file);
+		if (!self::isUserAllowed($user, $rate)) {
 			$html = '';
 			return false;
 		}
 
 		return true;
 	}
-	
+
 	/**
 	 * Prevent restricted image from chosen as page images
 	 *
-	 * @param array $image Associative array describing an image
+	 * @param PageImageCandidate $image Associative array describing an image
 	 * @param int $position Image order on page
 	 * @param float &$score Score for image
 	 * @return bool Always <code>true</code>
 	 */
-	public static function onPageImagesGetScore( array $image, $position, &$score ) {
-		if ( !empty( self::getContentRating( wfFindFile( $image['filename'] ) ) ) ) {
+	public static function onPageImagesGetScore(PageImageCandidate $image, $position, &$score)
+	{
+		if (!empty(self::getContentRating(MediaWikiServices::getInstance()->getRepoGroup()->findFile($image->getFileName())))) {
 			$score = -1000;
 		}
 
@@ -279,7 +287,7 @@ class MediaContentRatingHooks
 			return false;
 		}
 
-		return (bool) $user->getOption('cr-allow-' . strtolower($rate), false);
+		return (bool) MediaWikiServices::getInstance()->getUserOptionsLookup()->getOption($user, 'cr-allow-' . strtolower($rate), false);
 	}
 
 	/**
